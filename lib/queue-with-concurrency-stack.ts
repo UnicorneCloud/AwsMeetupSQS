@@ -11,12 +11,12 @@ export class QueueWithConcurrencyStack extends cdk.Stack {
 
     const queueWithConcurrencyDLQ = new sqs.Queue(
       this,
-      "integrationDeadLetterQueueDebug"
+      "queueWithConcurrencyDeadLetterQueue"
     );
 
     const queueWithConcurrencySQS = new sqs.Queue(
       this,
-      "integrationDeadLetterQueue",
+      "queueWithConcurrencyQueue",
       {
         deadLetterQueue: {
           queue: queueWithConcurrencyDLQ,
@@ -32,12 +32,12 @@ export class QueueWithConcurrencyStack extends cdk.Stack {
     );
 
     const sleepLambda = new lambda.NodejsFunction(this, "sleep", {
-      entry: `./lambas/sleep.ts`,
+      entry: `./lambdas/sleep.ts`,
     });
     sleepLambda.addEventSource(queueWithConcurrencyEventSource);
 
     const populateQueue = new lambda.NodejsFunction(this, "populate-queue", {
-      entry: `./lambas/populateQueue.ts`,
+      entry: `./lambdas/populateQueue.ts`,
       environment: {
         queueUrl: queueWithConcurrencySQS.queueUrl,
       },

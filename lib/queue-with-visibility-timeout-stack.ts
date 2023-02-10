@@ -11,12 +11,12 @@ export class QueueWithVisibilityTimeoutStack extends cdk.Stack {
 
     const queueWithVisibilityTimeoutDLQ = new sqs.Queue(
       this,
-      "integrationDeadLetterQueueDebug"
+      "qeueWithVisibilityTimeoutDeadLetterQueue"
     );
 
     const queueWithVisibilityTimeoutSQS = new sqs.Queue(
       this,
-      "integrationDeadLetterQueue",
+      "qeueWithVisibilityTimeoutQueue",
       {
         visibilityTimeout: cdk.Duration.seconds(12), // 6 x 2 seconds
         deadLetterQueue: {
@@ -29,12 +29,12 @@ export class QueueWithVisibilityTimeoutStack extends cdk.Stack {
       queueWithVisibilityTimeoutSQS
     );
     const sleepLambda = new lambda.NodejsFunction(this, "sleep", {
-      entry: `./lambas/sleep.ts`,
+      entry: `./lambdas/sleep.ts`,
     });
     sleepLambda.addEventSource(queueWithVisibilityTimeoutEventSource);
 
     const populateQueue = new lambda.NodejsFunction(this, "populate-queue", {
-      entry: `./lambas/populateQueue.ts`,
+      entry: `./lambdas/populateQueue.ts`,
       environment: {
         queueUrl: queueWithVisibilityTimeoutSQS.queueUrl,
       },

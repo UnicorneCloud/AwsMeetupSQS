@@ -10,14 +10,13 @@ export class QueueWithoutConcurrencyStack extends cdk.Stack {
 
     const queueWithoutConcurrencyDLQ = new sqs.Queue(
       this,
-      "integrationDeadLetterQueueDebug"
+      "queueWithoutConcurrencyDeadLetterQueue"
     );
 
     const queueWithoutConcurrencySQS = new sqs.Queue(
       this,
-      "integrationDeadLetterQueue",
+      "queueWithoutConcurrencyQueue",
       {
-        visibilityTimeout: cdk.Duration.seconds(2),
         deadLetterQueue: {
           queue: queueWithoutConcurrencyDLQ,
           maxReceiveCount: 1,
@@ -28,12 +27,12 @@ export class QueueWithoutConcurrencyStack extends cdk.Stack {
       queueWithoutConcurrencySQS
     );
     const sleepLambda = new lambda.NodejsFunction(this, "sleep", {
-      entry: `./lambas/sleep.ts`,
+      entry: `./lambdas/sleep.ts`,
     });
     sleepLambda.addEventSource(queueWithoutConcurrencyEventSource);
 
     const populateQueue = new lambda.NodejsFunction(this, "populate-queue", {
-      entry: `./lambas/populateQueue.ts`,
+      entry: `./lambdas/populateQueue.ts`,
       environment: {
         queueUrl: queueWithoutConcurrencySQS.queueUrl,
       },

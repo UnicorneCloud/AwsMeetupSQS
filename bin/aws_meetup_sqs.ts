@@ -4,7 +4,9 @@ import * as cdk from "aws-cdk-lib";
 import { QueueWithoutConcurrencyStack } from "../lib/queue-without-concurrency-stack";
 import { QueueWithVisibilityTimeoutStack } from "../lib/queue-with-visibility-timeout-stack";
 import { QueueWithConcurrencyStack } from "../lib/queue-with-concurrency-stack";
+import { Lumigo } from "@lumigo/cdk-constructs-v2";
 
+import { SecretValue } from "aws-cdk-lib";
 const app = new cdk.App();
 
 const props = {
@@ -21,3 +23,9 @@ new QueueWithVisibilityTimeoutStack(
 );
 
 new QueueWithConcurrencyStack(app, "QueueWithConcurrencyStack", props);
+
+new Lumigo({
+  lumigoToken: SecretValue.secretsManager("LumigoToken"),
+}).traceEverything(app);
+
+app.synth();
