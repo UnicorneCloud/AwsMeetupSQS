@@ -4,9 +4,7 @@ import * as cdk from "aws-cdk-lib";
 import { QueueWithoutConcurrencyStack } from "../lib/queue-without-concurrency-stack";
 import { QueueWithVisibilityTimeoutStack } from "../lib/queue-with-visibility-timeout-stack";
 import { QueueWithConcurrencyStack } from "../lib/queue-with-concurrency-stack";
-import { Lumigo } from "@lumigo/cdk-constructs-v2";
-
-import { SecretValue } from "aws-cdk-lib";
+import { applyLumigoLogging } from "../lib/lumigo";
 const app = new cdk.App();
 
 const props = {
@@ -15,17 +13,30 @@ const props = {
     region: process.env.CDK_DEFAULT_REGION,
   },
 };
-new QueueWithoutConcurrencyStack(app, "QueueWithoutConcurrencyStack", props);
-new QueueWithVisibilityTimeoutStack(
+
+const stacks = [];
+
+const queueWithoutConcurrencyStack = new QueueWithoutConcurrencyStack(
+  app,
+  "QueueWithoutConcurrencyStack",
+  props
+);
+stacks.push(queueWithoutConcurrencyStack);
+
+const queueWithVisibilityTimeoutStack = new QueueWithVisibilityTimeoutStack(
   app,
   "QueueWithVisibilityTimeoutStack",
   props
 );
+stacks.push(queueWithVisibilityTimeoutStack);
 
-new QueueWithConcurrencyStack(app, "QueueWithConcurrencyStack", props);
+const queueWithConcurrencyStack = new QueueWithConcurrencyStack(
+  app,
+  "QueueWithConcurrencyStack",
+  props
+);
+stacks.push(queueWithConcurrencyStack);
 
-new Lumigo({
-  lumigoToken: SecretValue.secretsManager("LumigoToken"),
-}).traceEverything(app);
+applyLumigoLogging(stacks);
 
 app.synth();

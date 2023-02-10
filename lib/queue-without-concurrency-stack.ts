@@ -1,6 +1,10 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { aws_lambda_nodejs as lambda, aws_sqs as sqs } from "aws-cdk-lib";
+import {
+  aws_lambda_nodejs as lambda,
+  aws_sqs as sqs,
+  Duration,
+} from "aws-cdk-lib";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 export class QueueWithoutConcurrencyStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -17,6 +21,7 @@ export class QueueWithoutConcurrencyStack extends cdk.Stack {
       this,
       "queueWithoutConcurrencyQueue",
       {
+        visibilityTimeout: Duration.seconds(11),
         deadLetterQueue: {
           queue: queueWithoutConcurrencyDLQ,
           maxReceiveCount: 1,
@@ -24,20 +29,29 @@ export class QueueWithoutConcurrencyStack extends cdk.Stack {
       }
     );
     const queueWithoutConcurrencyEventSource = new SqsEventSource(
-      queueWithoutConcurrencySQS
+      queueWithoutConcurrencySQS,
+      {
+        batchSize: 1,
+      }
     );
     const sleepLambda = new lambda.NodejsFunction(this, "sleep", {
+      timeout: Duration.seconds(11),
       entry: `./lambdas/sleep.ts`,
     });
     sleepLambda.addEventSource(queueWithoutConcurrencyEventSource);
 
-    const populateQueue = new lambda.NodejsFunction(this, "populate-queue", {
-      entry: `./lambdas/populateQueue.ts`,
-      environment: {
-        queueUrl: queueWithoutConcurrencySQS.queueUrl,
-      },
-    });
+    const populateQueueLambda = new lambda.NodejsFunction(
+      this,
+      "populate-queue",
+      {
+        timeout: Duration.seconds(60),
+        entry: `./lambdas/populateQueue.ts`,
+        environment: {
+          queueUrl: queueWithoutConcurrencySQS.queueUrl,
+        },
+      }
+    );
 
-    queueWithoutConcurrencySQS.grantSendMessages(populateQueue);
+    queueWithoutConcurrencySQS.grantSendMessages(populateQueueLambda);
   }
 }
