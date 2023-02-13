@@ -8,7 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy": "yarn cdk deploy --profile meetup --all"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.110",

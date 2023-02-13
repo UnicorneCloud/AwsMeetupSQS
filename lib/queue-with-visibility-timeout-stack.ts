@@ -22,10 +22,10 @@ export class QueueWithVisibilityTimeoutStack extends cdk.Stack {
       this,
       "queueWithVisibilityTimeoutQueue",
       {
-        visibilityTimeout: cdk.Duration.seconds(66), // 60 seconds
+        visibilityTimeout: cdk.Duration.seconds(12), // 6 x lambda timeout
         deadLetterQueue: {
           queue: queueWithVisibilityTimeoutDLQ,
-          maxReceiveCount: 5,
+          maxReceiveCount: 5, // 5 here, if we set to 1 we probably have messages in DLQ.
         },
       }
     );
@@ -36,13 +36,14 @@ export class QueueWithVisibilityTimeoutStack extends cdk.Stack {
       }
     );
     const sleepLambda = new lambda.NodejsFunction(this, "sleep", {
-      timeout: Duration.seconds(11),
+      timeout: Duration.seconds(2),
       entry: `./lambdas/sleep.ts`,
+      reservedConcurrentExecutions: 10,
     });
     sleepLambda.addEventSource(queueWithVisibilityTimeoutEventSource);
 
     const populateQueue = new lambda.NodejsFunction(this, "populate-queue", {
-      timeout: Duration.seconds(60),
+      timeout: Duration.seconds(600),
       entry: `./lambdas/populateQueue.ts`,
       environment: {
         queueUrl: queueWithVisibilityTimeoutSQS.queueUrl,

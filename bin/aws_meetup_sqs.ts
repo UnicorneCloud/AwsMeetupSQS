@@ -5,6 +5,7 @@ import { QueueWithoutConcurrencyStack } from "../lib/queue-without-concurrency-s
 import { QueueWithVisibilityTimeoutStack } from "../lib/queue-with-visibility-timeout-stack";
 import { QueueWithConcurrencyStack } from "../lib/queue-with-concurrency-stack";
 import { applyLumigoLogging } from "../lib/lumigo";
+import { FifoQueueStack } from "../lib/fifo-queue-stack";
 const app = new cdk.App();
 
 const props = {
@@ -36,6 +37,9 @@ const queueWithConcurrencyStack = new QueueWithConcurrencyStack(
   props
 );
 stacks.push(queueWithConcurrencyStack);
+
+const fifoQueueStack = new FifoQueueStack(app, "FifoQueueStack", props);
+stacks.push(fifoQueueStack);
 
 applyLumigoLogging(stacks);
 

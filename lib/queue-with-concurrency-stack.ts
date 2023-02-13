@@ -21,12 +21,11 @@ export class QueueWithConcurrencyStack extends cdk.Stack {
     const queueWithConcurrencySQS = new sqs.Queue(
       this,
       "queueWithConcurrencyQueue",
-      // We can set visibilityTimeout as the minimal because it works fine now
       {
-        visibilityTimeout: Duration.seconds(66),
+        visibilityTimeout: cdk.Duration.seconds(12), // 6 x lambda timeout
         deadLetterQueue: {
           queue: queueWithConcurrencyDLQ,
-          maxReceiveCount: 1,
+          maxReceiveCount: 1, // We can have maxReceiveCount at 1
         },
       }
     );
@@ -39,13 +38,14 @@ export class QueueWithConcurrencyStack extends cdk.Stack {
     );
 
     const sleepLambda = new lambda.NodejsFunction(this, "sleep", {
-      timeout: Duration.seconds(11),
+      timeout: Duration.seconds(2),
       entry: `./lambdas/sleep.ts`,
+      reservedConcurrentExecutions: 10,
     });
     sleepLambda.addEventSource(queueWithConcurrencyEventSource);
 
     const populateQueue = new lambda.NodejsFunction(this, "populate-queue", {
-      timeout: Duration.seconds(60),
+      timeout: Duration.seconds(600),
       entry: `./lambdas/populateQueue.ts`,
       environment: {
         queueUrl: queueWithConcurrencySQS.queueUrl,

@@ -21,7 +21,7 @@ export class QueueWithoutConcurrencyStack extends cdk.Stack {
       this,
       "queueWithoutConcurrencyQueue",
       {
-        visibilityTimeout: Duration.seconds(11),
+        visibilityTimeout: Duration.seconds(6),
         deadLetterQueue: {
           queue: queueWithoutConcurrencyDLQ,
           maxReceiveCount: 1,
@@ -35,8 +35,9 @@ export class QueueWithoutConcurrencyStack extends cdk.Stack {
       }
     );
     const sleepLambda = new lambda.NodejsFunction(this, "sleep", {
-      timeout: Duration.seconds(11),
+      timeout: Duration.seconds(2),
       entry: `./lambdas/sleep.ts`,
+      reservedConcurrentExecutions: 10,
     });
     sleepLambda.addEventSource(queueWithoutConcurrencyEventSource);
 
@@ -44,7 +45,7 @@ export class QueueWithoutConcurrencyStack extends cdk.Stack {
       this,
       "populate-queue",
       {
-        timeout: Duration.seconds(60),
+        timeout: Duration.seconds(600),
         entry: `./lambdas/populateQueue.ts`,
         environment: {
           queueUrl: queueWithoutConcurrencySQS.queueUrl,
