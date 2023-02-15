@@ -29,6 +29,7 @@ export class SqsLambdaWithReservedConcurrencyStack extends cdk.Stack {
     })
 
     const sleepLambda = new lambda.NodejsFunction(this, 'lambda-sleep', {
+      functionName: 'Queue-Lambda-With-Reserved-Concurrency',
       timeout: Duration.seconds(15),
       entry: `./lambdas/sleep.ts`,
       reservedConcurrentExecutions: 4, // <--- RESERVED CONCURRENCY

@@ -30,6 +30,7 @@ export class SqsLambdaWithMaximumConcurrencyStack extends cdk.Stack {
     })
 
     const sleepLambda = new lambda.NodejsFunction(this, 'lambda-sleep', {
+      functionName: 'Queue-Lambda-With-Maximum-Concurrency',
       timeout: Duration.seconds(15),
       entry: `./lambdas/sleep.ts`,
     });

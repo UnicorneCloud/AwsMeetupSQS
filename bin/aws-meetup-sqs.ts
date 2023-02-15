@@ -2,11 +2,13 @@
 import "source-map-support/register";
 import * as cdk from "aws-cdk-lib";
 import { 
+  DashboardStack,
   SqsFifoLambdaStack,
   SqsLambdaWithMaximumConcurrencyStack,
   SqsLambdaWithReservedConcurrencyStack 
 } from "../lib";
 import { applyLumigoLogging } from "../lib/lumigo";
+import { Dashboard } from "aws-cdk-lib/aws-cloudwatch";
 const app = new cdk.App();
 
 const props = {
@@ -16,19 +18,15 @@ const props = {
   },
 };
 
-const stacks = [];
+new SqsFifoLambdaStack(app, 'SqsFifoLambdaStack', props);
 
-const sqsFifoLambdaStack = new SqsFifoLambdaStack(app, 'SqsFifoLambdaStack',
-  props
-);
+new SqsLambdaWithMaximumConcurrencyStack(app, 'SqsLambdaWithMaximumConcurrencyStack', props);
 
-const sqsLambdaWithMaximumConcurrencyStack = new SqsLambdaWithMaximumConcurrencyStack(app, 'SqsLambdaWithMaximumConcurrencyStack',
-  props
-);
+new SqsLambdaWithReservedConcurrencyStack(app, 'SqsLambdaWithReservedConcurrencyStack', props);
 
-const sqsLambdaWithReservedConcurrencyStack = new SqsLambdaWithReservedConcurrencyStack(app, 'SqsLambdaWithReservedConcurrencyStack',
-  props
-);
+new DashboardStack(app, 'DashboardStack', props)
+
+
 
 applyLumigoLogging(app);
 

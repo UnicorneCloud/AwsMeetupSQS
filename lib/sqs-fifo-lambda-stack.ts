@@ -32,6 +32,7 @@ export class SqsFifoLambdaStack extends cdk.Stack {
     })
 
     const sleepLambda = new lambda.NodejsFunction(this, 'lambda-sleep', {
+      functionName: 'Sqs-Fifo-Lambda',
       timeout: Duration.seconds(15),
       entry: `./lambdas/sleep.ts`,
     });
@@ -46,4 +47,5 @@ export class SqsFifoLambdaStack extends cdk.Stack {
     });
     queue.grantSendMessages(populateQueue);
   }
+
 }
