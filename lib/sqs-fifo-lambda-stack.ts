@@ -39,6 +39,7 @@ export class SqsFifoLambdaStack extends cdk.Stack {
     sleepLambda.addEventSource(sqsEventSource);
 
     const populateQueue = new lambda.NodejsFunction(this, 'lambda-populate-queue', {
+      functionName: 'Sqs-Fifo-Lambda-Populate',
       timeout: Duration.seconds(600),
       entry: `./lambdas/populateQueueWithMessageGroupIds.ts`,
       environment: {

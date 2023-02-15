@@ -1,14 +1,33 @@
-# Welcome to your CDK TypeScript project
+# AWS MEETUP SQS LAMBDA - DEMO
 
-This is a blank project for CDK development with TypeScript.
+## Deploying
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+```
+yarn deploy
+```
 
-## Useful commands
+## Demo
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+Populate Queue
+
+```
+aws lambda invoke --function-name "Queue-Lambda-With-Reserved-Concurrency-Populate"  --profile meetup /dev/null
+aws lambda invoke --function-name "Sqs-Fifo-Lambda-Populate" --profile meetup /dev/null
+aws lambda invoke --function-name "Queue-Lambda-With-Maximum-Concurrency-Populate" --profile meetup /dev/null
+```
+
+Purge DLQ (usefull when we re-run demo)
+```
+aws sqs purge-queue --queue-url https://sqs.ca-central-1.amazonaws.com/660166667835/Queue-Lambda-With-Reserved-Concurrency --profile meetup
+aws sqs purge-queue --queue-url https://sqs.ca-central-1.amazonaws.com/660166667835/Queue-Lambda-With-Reserved-Concurrency-DLQ --profile meetup
+aws sqs purge-queue --queue-url https://sqs.ca-central-1.amazonaws.com/660166667835/Sqs-Fifo-Lambda.fifo --profile meetup
+aws sqs purge-queue --queue-url https://sqs.ca-central-1.amazonaws.com/660166667835/Sqs-Fifo-Lambda-Dlq.fifo --profile meetup
+aws sqs purge-queue --queue-url https://sqs.ca-central-1.amazonaws.com/660166667835/Queue-Lambda-With-Maximum-Concurrency --profile meetup
+aws sqs purge-queue --queue-url https://sqs.ca-central-1.amazonaws.com/660166667835/Queue-Lambda-With-Maximum-Concurrency-DLQ --profile meetup
+
+```
+
+## Dashboard
+
+The dashboard url is: https://ca-central-1.console.aws.amazon.com/cloudwatch/home?region=ca-central-1#dashboards:name=SQS-Lambda
+

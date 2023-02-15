@@ -55,12 +55,14 @@ export class DashboardStack extends cdk.Stack {
       }
     };
     const sqsDimensions: cloudwatch.MetricOptions = {
+      label: 'Queue',
       dimensionsMap: {
         'QueueName': sqsName
       }
 
     };
     const dlqDimensions: cloudwatch.MetricOptions = {
+      label: 'DLQueue',
       dimensionsMap: {
         'QueueName': dlqName
       }

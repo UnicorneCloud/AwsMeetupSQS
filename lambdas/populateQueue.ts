@@ -17,5 +17,5 @@ export const handler = async () => {
     );
   }
   await Promise.all(promises);
-  console.log("Populate queue done", promises);
+  console.log("Populate queue done");
 };

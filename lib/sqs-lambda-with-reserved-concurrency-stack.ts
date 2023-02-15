@@ -37,6 +37,7 @@ export class SqsLambdaWithReservedConcurrencyStack extends cdk.Stack {
     sleepLambda.addEventSource(sqsEventSource);
 
     const populateQueue = new lambda.NodejsFunction(this, 'lambda-populate-queue', {
+      functionName: 'Queue-Lambda-With-Reserved-Concurrency-Populate',
       timeout: Duration.seconds(600),
       entry: `./lambdas/populateQueue.ts`,
       environment: {

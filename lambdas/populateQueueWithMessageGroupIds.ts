@@ -19,5 +19,5 @@ export const handler = async () => {
     );
   }
   await Promise.all(promises);
-  console.log("Populate queue with message group ids done", promises);
+  console.log("Populate queue with message group ids done");
 };
