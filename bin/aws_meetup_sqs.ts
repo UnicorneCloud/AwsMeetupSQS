@@ -10,8 +10,8 @@ const app = new cdk.App();
 
 const props = {
   env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION,
+    account: '660166667835',
+    region: 'ca-central-1',
   },
 };
 
