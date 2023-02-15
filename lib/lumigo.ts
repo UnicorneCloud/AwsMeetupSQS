@@ -15,11 +15,9 @@ const LUMIGO_TOKEN_SSM_NAME = "LumigoToken";
   --description "Token for lumigo" \
   --secret-string YOUR_LUMIGO_TOKEN --profile yourProfile
 */
-export function applyLumigoLogging(stacks: Stack[]): void {
+export function applyLumigoLogging(node: IConstruct): void {
   const visitor = new LambdaFunctionVisitor();
-  stacks.forEach((stack) => {
-    Aspects.of(stack).add(visitor);
-  });
+  Aspects.of(node).add(visitor);
 }
 
 class LambdaFunctionVisitor implements IAspect {

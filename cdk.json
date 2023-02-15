@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/aws_meetup_sqs.ts",
+  "app": "yarn ts-node --prefer-ts-exts bin/aws-meetup-sqs.ts",
   "watch": {
     "include": [
       "**"

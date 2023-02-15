@@ -6,7 +6,7 @@ export const handler = async () => {
   console.log("Populate queue");
 
   const promises = [];
-  for (let i = 0; i < 2000; i++) {
+  for (let i = 0; i < 200; i++) {
     promises.push(
       await sqsClient.send(
         new SendMessageCommand({
